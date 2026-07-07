@@ -1,56 +1,16 @@
-name: Build APK from Google Drive
+name: Test Download
 
 on:
-  push:
-    branches: [ main ]
   workflow_dispatch:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v3
-
-      - name: Install gdown
-        run: pip install gdown
-
-      - name: Download project from Google Drive
+      - name: Download from Google Drive
         run: |
+          pip install gdown
           FILE_ID="1DEqIDZXqw7L9bGyA4iBlAQXVJTpww9HT"
           gdown "https://drive.google.com/uc?id=$FILE_ID" -O project.zip
-          echo "=== File setelah download ==="
           ls -la
-          echo "=== Ekstrak ZIP ==="
-          unzip -o project.zip
-          echo "=== Struktur setelah ekstrak ==="
-          ls -la
-          # Kalau ada folder magic-super-booster, pindahkan isinya ke root
-          if [ -d "magic-super-booster" ]; then
-            echo "=== Memindahkan isi folder magic-super-booster ==="
-            mv magic-super-booster/* . || true
-            rm -rf magic-super-booster
-          fi
-          echo "=== Struktur akhir ==="
-          ls -la
-
-      - name: Build APK
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleDebug
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-debug
-          path: app/build/outputs/apk/debug/*.apk
+          unzip -l project.zip  # Lihat isi ZIP tanpa ekstrak
