@@ -22,16 +22,27 @@ jobs:
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
 
+      - name: Install gdown
+        run: pip install gdown
+
       - name: Download project from Google Drive
         run: |
-          pip install gdown
           FILE_ID="1DEqIDZXqw7L9bGyA4iBlAQXVJTpww9HT"
           gdown "https://drive.google.com/uc?id=$FILE_ID" -O project.zip
-          unzip project.zip
+          echo "=== File setelah download ==="
+          ls -la
+          echo "=== Ekstrak ZIP ==="
+          unzip -o project.zip
+          echo "=== Struktur setelah ekstrak ==="
+          ls -la
+          # Kalau ada folder magic-super-booster, pindahkan isinya ke root
           if [ -d "magic-super-booster" ]; then
+            echo "=== Memindahkan isi folder magic-super-booster ==="
             mv magic-super-booster/* . || true
             rm -rf magic-super-booster
           fi
+          echo "=== Struktur akhir ==="
+          ls -la
 
       - name: Build APK
         run: |
